@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-pod
+  template:
+    metadata:
+      labels:
+        app: user-pod
+    spec:
+      containers:
+        - name: users
+          image: hichamelb/users-api:latest
+          env:
+            - name: AUTH_URL
+              value: auth-service.default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-pod
+  template:
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+        - name: nginx
+          image: hichamelb/nginx:latest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks-pod
+  template:
+    metadata:
+      labels:
+        app: tasks-pod
+    spec:
+      containers:
+        - name: tasks
+          image: hichamelb/tasks-api:latest
+          env:
+            - name: AUTH_URL
+              value: auth-service.default
+            - name: TASKS_FOLDER
+              value: tasks
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-pod
+  template:
+    metadata:
+      labels:
+        app: auth-pod
+    spec:
+      containers:
+        - name: auth
+          image: hichamelb/auth-api:latest
